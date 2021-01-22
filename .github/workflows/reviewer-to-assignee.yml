@@ -12,7 +12,7 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log(context.payload.pull_request.requested_reviewers.users)
+            console.log(context.payload.pull_request.requested_reviewers)
             const users = context.payload.pull_request.requested_reviewers.users.map(a => a.login);
             github.issues.addAssignees({
               issue_number: context.payload.pull_request.number,
