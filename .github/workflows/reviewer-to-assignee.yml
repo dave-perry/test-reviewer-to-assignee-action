@@ -1,12 +1,8 @@
 name: Reviewer to Assignee
 
-# on:
-#   pull_request:
-#     types: [review_requested, review_request_removed]
-
 on:
-  issues:
-    types: [opened]
+  pull_request:
+    types: [review_requested, review_request_removed]
 
 jobs:
   assignee_to_reviewer:
@@ -16,9 +12,16 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
+            const reviewers = github.pulls.listRequestedReviewers({
+              pull_number: context.pulls.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const users = reviewers.map(a => a.login);
+            github.issues.addAssignees({
+              issue_number: context.pulls.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 Thanks for reporting!'
-            })
+              assignees: users
+            });
+            
