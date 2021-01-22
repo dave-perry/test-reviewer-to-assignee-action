@@ -14,10 +14,20 @@ jobs:
           script: |
             console.log(context.payload.pull_request)
             const users = context.payload.pull_request.requested_reviewers.map(a => a.login);
-            github.issues.addAssignees({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              assignees: users
-            });
+            if (users.count > 0) {
+              github.issues.addAssignees({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                assignees: users
+              });
+            } else {
+              const assignees = context.payload.pull_request.assignees.map(a => a.login);
+              github.issues.removeAssignees({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                assignees: assignees
+              });
+            }
             
