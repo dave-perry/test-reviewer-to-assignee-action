@@ -17,6 +17,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+            console.log(reviewers)
             const users = reviewers.map(a => a.login);
             github.issues.addAssignees({
               issue_number: context.payload.pull_request.number,
