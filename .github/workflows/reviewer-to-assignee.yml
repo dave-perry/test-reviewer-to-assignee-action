@@ -13,20 +13,25 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             console.log(context.payload.pull_request)
-            const users = context.payload.pull_request.requested_reviewers.map(a => a.login);
-            if (users.length > 0) {
-              github.issues.addAssignees({
-                issue_number: context.payload.pull_request.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                assignees: users
-              });
-            } else {
-              const assignees = context.payload.pull_request.assignees.map(a => a.login);
+            const reviewers = context.payload.pull_request.requested_reviewers.map(a => a.login);
+            const assignees = context.payload.pull_request.assignees.map(a => a.login);
+            const assigneesToAdd = reviewers.filter(a => !assignees.includes(a)));
+            const assigneesToRemove = assignees.filter(a => !reviewers.includes(a)));
+            
+            if (assigneesToRemove.length > 0) {
               github.issues.removeAssignees({
                 issue_number: context.payload.pull_request.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                assignees: assignees
+                assignees: assigneesToRemove
+              });
+            }
+            
+            if (assigneesToAdd.length > 0) {
+              github.issues.addAssignees({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                assignees: assigneesToAdd
               });
             }
