@@ -1,0 +1,24 @@
+name: Reviewer to Assignee
+
+# on:
+#   pull_request:
+#     types: [review_requested, review_request_removed]
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  assignee_to_reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!'
+            })
