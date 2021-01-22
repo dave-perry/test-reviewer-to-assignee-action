@@ -2,7 +2,7 @@ name: Reviewer to Assignee
 
 on:
   pull_request:
-    types: [review_requested]
+    types: [review_requested, review_request_removed]
 
 jobs:
   assignee_to_reviewer:
